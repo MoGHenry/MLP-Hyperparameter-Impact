@@ -16,38 +16,41 @@ def initialize_parameters(input_size, hidden_size, output_size):
 # calculate z1, a1, z2, a2
 # return
 def forward_propagation(x, w1, b1, w2, b2):
-    z1 = w1*x + b1
-    a1 = Sigmoid(z1)
-    z2 = w2*x + b2
-    a2 = SoftMax(z2)
-    return z1, a1, z2, a2
+    return
+
 
 # activation function
 # relu, sigmoid, tanh, softmax
-def activation_function_sigmoid(z):
+def activation_function_xxx(z):
+    return
+
+def sigmoid(z):
     return 1/(1-exp(z))
 
-def activation_function_relu(z):
+def relu(z):
     return maximum(0,z)
 
-def activation_function_tanh(z):
+def tanh(z):
     return (exp(2x)-1)/(exp(2x)+1)
 
-def activation_function_softmax(z):
+def softmax(z):
     return exp(z)/sum(exp(z))
 
 # derivation of activation function
 # relu, sigmoid, tanh, softmax
-def activation_function_derivative_sigmoid(z):
+def activation_function_derivative_xxx(z):
+    return
+
+def dsigmoid(z):
     return exp(z)*(sigmoid(z)**2)
 
-def activation_function_derivative_relu(z):
+def drelu(z):
     return z > 0
 
-def activation_function_derivative_tanh(z):
+def dtanh(z):
     return 4/(exp(z)+exp(-z))**2
     
-def activation_function_derivative_softmax(z):
+def dsoftmax(z):
     return softmax(z)*(1-softmax(z))
 
 # softmax function
