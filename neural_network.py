@@ -24,16 +24,16 @@ def forward_propagation(x, w1, b1, w2, b2):
 def activation_function_xxx(z):
     return
 
-def sigmoid(z):
+def sigmoid(z)
     return 1/(1-exp(z))
 
-def relu(z):
+def relu(z)
     return maximum(0,z)
 
-def tanh(z):
+def tanh(z)
     return (exp(2x)-1)/(exp(2x)+1)
 
-def softmax(z):
+def softmax(z)
     return exp(z)/sum(exp(z))
 
 # derivation of activation function
@@ -41,16 +41,16 @@ def softmax(z):
 def activation_function_derivative_xxx(z):
     return
 
-def dsigmoid(z):
+def dsigmoid(z)
     return exp(z)*(sigmoid(z)**2)
 
-def drelu(z):
+def drelu(z)
     return z > 0
 
-def dtanh(z):
+def dtanh(z)
     return 4/(exp(z)+exp(-z))**2
     
-def dsoftmax(z):
+def dsoftmax(z)
     return softmax(z)*(1-softmax(z))
 
 # softmax function
