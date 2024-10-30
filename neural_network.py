@@ -1,20 +1,16 @@
 import numpy as np
 from activations import get_activation_functions
 from layers import Layer
-
+from init_parameters import std_initialize_parameters, he_initialize_parameters
 
 # https://youtu.be/w8yWXqWQYmU?si=MXhI9EgsfYXMdshP&t=917
 
 
 class MLP:
-    def __init__(self, hidden_layer_sizes: list, learning_rate, num_iterations,
-                 activation_function="relu", shuffle=True, init_method="std"):
-        self.hidden_layer_sizes = hidden_layer_sizes
+    def __init__(self, learning_rate, num_iterations, shuffle=True):
         self.learning_rate = learning_rate
         self.num_iterations = num_iterations
-        self.init_method = self.get_init_method(init_method)
-        self.activation_function, self.derivative_activation_function = self.get_activation_function(
-            activation_function)
+        self.hidden_layers_sizes = []
         self.layers = []
         self.w = []
         self.b = []
@@ -32,15 +28,19 @@ class MLP:
         #                          self.parameters["b2"], self.activation_function)
         # return y_pred
 
-    def add_layer(self, neurons, activation_function):
+    def add_layer(self, neurons, activation_function: str = "relu", init_method="std"):
         # check if self.hidden_layers is empty
         if len(self.layers) == 0:
             self.layers.append(Layer(neurons=neurons, activation_function=activation_function))
             self.layers[-1].head = True
+            w, b = std_initialize_parameters(self.layers[-1].input_size, self.layers[-1].output_size)
+            self.w.append(w)
+            self.b.append(b)
         else:
             self.layers[-1].tail = False
             self.layers.append(Layer(neurons=neurons, activation_function=activation_function))
             self.layers[-1].tail = True
+            self.hidden_layers_sizes.append(neurons)
 
     def get_init_method(self, init_method="std"):
         if init_method == "std":
@@ -48,40 +48,8 @@ class MLP:
         elif init_method == "he":
             return self.he_initialize_parameters
 
-    def get_activation_function(self, activation="relu"):
-        activation_function, derivative_activation_function = get_activation_functions(activation)
-        return activation_function, derivative_activation_function
 
-    # initialize w1,b1,w2,b2
-    # w1 shape (input_size, hidden_size)
-    # b1 shape (1, hidden_size)
-    # w2 shape (hidden_size, output_size)
-    # b2 shape (1, output_size)
-    def std_initialize_parameters(self, input_size, hidden_size, output_size):
-        w1 = np.random.randn(hidden_size, input_size)
-        b1 = np.zeros((hidden_size, 1))
-        w2 = np.random.randn(output_size, hidden_size)
-        b2 = np.zeros((output_size, 1))
-        parameters = {
-            "w1": w1,
-            "b1": b1,
-            "w2": w2,
-            "b2": b2
-        }
-        return parameters
 
-    def he_initialize_parameters(self, input_size, hidden_size, output_size):
-        w1 = np.random.randn(hidden_size, input_size) * np.sqrt(2. / input_size)
-        b1 = np.zeros((hidden_size, 1))
-        w2 = np.random.randn(output_size, hidden_size) * np.sqrt(2. / hidden_size)
-        b2 = np.zeros((output_size, 1))
-        parameters = {
-            "w1": w1,
-            "b1": b1,
-            "w2": w2,
-            "b2": b2
-        }
-        return parameters
 
 
 def update_parameters(w1, b1, w2, b2, dw1, db1, dw2, db2, learning_rate):

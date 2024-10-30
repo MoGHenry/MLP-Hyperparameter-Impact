@@ -5,12 +5,17 @@ def softmax(z):
     return np.exp(z) / np.sum(np.exp(z), axis=0)
 
 
+def get_activation_function(self, activation="relu"):
+    activation_function, derivative_activation_function = get_activation_functions(activation)
+    return activation_function, derivative_activation_function
+
+
 class Layer:
     def __init__(self, neurons, activation_function):
         self.head = False
         self.tail = False
         self.neurons = neurons
-        self.activation_function = activation_function
+        self.activation_function, self.derivative_activation_function = get_activation_function(activation_function)
 
     def forward_propagation(self, w, b):
         z1 = np.dot(w, x) + b
