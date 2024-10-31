@@ -26,6 +26,7 @@ class MLP:
         self.dw = [0]
         self.db = [0]
 
+    # TODO
     def fit(self, x, y):
         for i in range(self.num_iterations):
             current_layer = 1
@@ -47,6 +48,7 @@ class MLP:
         #                                    self.parameters["b2"], self.learning_rate, self.num_iterations,
         #                                    self.activation_function, self.derivative_activation_function)
 
+    # TODO
     def predict(self, x):
         pass
         # y_pred = make_prediction(x, self.parameters["w1"], self.parameters["b1"], self.parameters["w2"],
@@ -70,6 +72,7 @@ class MLP:
             self.b.append(b)
 
 
+# TODO
 def update_parameters(w1, b1, w2, b2, dw1, db1, dw2, db2, learning_rate):
     updated_parameters = {
         "w1": w1 - learning_rate * dw1,
@@ -79,11 +82,11 @@ def update_parameters(w1, b1, w2, b2, dw1, db1, dw2, db2, learning_rate):
     }
     return updated_parameters
 
-
+# TODO
 def get_predictions(a2):
     return np.argmax(a2, axis=0)
 
-
+# TODO
 def get_accuracy(y_pred, y_true):
     return np.mean(y_pred == y_true)
 
@@ -123,3 +126,66 @@ def make_prediction(x, w1, b1, w2, b2, activation_function):
 # TODO
 def test_model(X, y, w1, b1, w2, b2):
     return
+
+
+
+# layers.py file
+
+# import numpy as np
+#
+#
+# def softmax(z):
+#     return np.exp(z) / np.sum(np.exp(z), axis=0)
+#
+#
+# def get_activation_function(self, activation="relu"):
+#     activation_function, derivative_activation_function = get_activation_functions(activation)
+#     return activation_function, derivative_activation_function
+#
+#
+# # one-hot encoding
+# # num_classes is the number of unique labels in the output
+# def one_hot(y, num_classes):
+#     return np.eye(num_classes)[y.reshape(-1)]
+#
+#
+# class Layer:
+#     def __init__(self, neurons, activation_function):
+#         self.head = False
+#         self.tail = False
+#         self.neurons = neurons
+#         self.activation_function, self.derivative_activation_function = get_activation_function(activation_function)
+#
+#     def forward_propagation(self, x, w1, b1, a0=None):
+#         if self.head:
+#             z1 = np.dot(w1, x) + b1
+#             a1 = self.activation_function(z1)
+#             return a1, z1
+#         elif self.tail:
+#             z1 = np.dot(w1, a0) + b1
+#             y = softmax(z1)
+#             return y, z1
+#         else:
+#             z1 = np.dot(w1, a0) + b1
+#             a1 = self.activation_function(z1)
+#             return a1, z1
+#
+#     # backward propagation
+#     # calculate dw1, db1, dw2, db2
+#     def backward_propagation(self, x, a0, a1, y=None, dz1=None, z1=None, w2=None, dz2=None):
+#         if self.tail:
+#             true_labels = one_hot(y, a1.shape[0])
+#             dz1 = a1 - true_labels
+#             dw1 = np.dot(dz1, a0.T)
+#             db1 = np.sum(dz1, axis=1, keepdims=True)
+#             return dw1, db1
+#         elif self.head:
+#             dz1 = np.dot(w2.T, dz2) * self.derivative_activation_function(z1)
+#             dw1 = np.dot(dz1, x.T)
+#             db1 = np.sum(dz1, axis=1, keepdims=True)
+#             return dw1, db1
+#         else:
+#             dz1 = np.dot(w2.T, dz2) * self.derivative_activation_function(z1)
+#             dw1 = np.dot(dz1, a0.T)
+#             db1 = np.sum(dz1, axis=1, keepdims=True)
+#             return dw1, db1
