@@ -29,7 +29,8 @@ def activation_function_tanh(z):
 # derivation of activation function
 # relu, sigmoid, tanh, softmax
 def activation_function_derivative_relu(z):
-    return np.greater(z, 0).astype(int)
+    # return np.greater(z, 0).astype(int)
+    return z > 0
 
 
 def activation_function_derivative_sigmoid(z):
