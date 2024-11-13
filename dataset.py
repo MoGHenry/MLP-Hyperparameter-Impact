@@ -23,6 +23,7 @@ def preprocess_data(data: pd.DataFrame) -> np.ndarray:
 # first col is the label, rest are features
 def split_data(data: np.ndarray, size: float = 0.8) -> dict:
     # Shuffle the data
+    np.random.seed(42)
     np.random.shuffle(data)
     # breakpoint()
     m, n = data.shape
