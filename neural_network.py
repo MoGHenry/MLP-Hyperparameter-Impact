@@ -3,6 +3,8 @@ from activations import get_activation_functions
 from layers import Layer
 from init_parameters import std_initialize_parameters, he_initialize_parameters
 from loss import cross_entropy_loss, one_hot
+from layers import softmax
+
 
 # https://youtu.be/w8yWXqWQYmU?si=MXhI9EgsfYXMdshP&t=917
 
@@ -30,6 +32,7 @@ class MLP:
 
     # TODO
     def fit(self, x, y):
+        # breakpoint()
         num_layers = len(self.layers)
         self.a = [0] * num_layers  # Initialize activations list
         self.z = [0] * num_layers  # Initialize z values list
@@ -41,14 +44,15 @@ class MLP:
             # Forward propagation through each layer
             current_input = x  # Initial input for the first layer
             self.a[0] = current_input  # Store the activation for the input layer
-
+            # breakpoint()
             for current_layer in range(1, num_layers):
+                # breakpoint()
                 if current_layer == 1:  # If it's the first hidden layer
-                    a, z = self.layers[current_layer - 1].forward_propagation(
+                    a, z = self.layers[current_layer].forward_propagation(
                         self.w[current_layer], self.b[current_layer], x=current_input
                     )
                 else:  # For subsequent layers
-                    a, z = self.layers[current_layer - 1].forward_propagation(
+                    a, z = self.layers[current_layer].forward_propagation(
                         self.w[current_layer], self.b[current_layer], a0=current_input
                     )
 
@@ -61,11 +65,11 @@ class MLP:
             for current_layer in reversed(range(1, num_layers)):
                 if current_layer == num_layers - 1:
                     dw, db, dz = self.layers[current_layer].backward_propagation(
-                        x=None, a0=self.a[current_layer - 1], a1=self.a[current_layer], y=y
+                        x=x, a0=self.a[current_layer - 1], a1=self.a[current_layer], y=y
                     )
                 else:
                     dw, db, dz = self.layers[current_layer].backward_propagation(
-                        x=None,
+                        x=x,
                         a0=self.a[current_layer - 1],
                         a1=self.a[current_layer],
                         z1=self.z[current_layer],
@@ -79,49 +83,31 @@ class MLP:
 
             # Update weights and biases
             for current_layer in range(1, num_layers):
+                # breakpoint()
                 self.w[current_layer] -= self.learning_rate * self.dw[current_layer]
                 self.b[current_layer] -= self.learning_rate * self.db[current_layer]
+                # print(sum(sum(self.w[current_layer])))
+                # breakpoint()
 
-            # Optionally print progress
+            # print progress every 2 iterations or at the end of the loop
             if i % 2 == 0 or i == self.num_iterations - 1:
                 y_pred = self.predict(x)
                 loss = cross_entropy_loss(one_hot(y, self.layers_sizes[-1]), y_pred)
                 accuracy = get_accuracy(y_pred, y)
                 print(f"Iteration {i + 1}/{self.num_iterations}, Accuracy: {accuracy:.4f}")
 
-    # TODO
-    def predict(self, x):
-        current_input = x
-        num_layers = len(self.layers)
-
-        for current_layer in range(num_layers):
-            # Adjust indexing logic if self.w and self.b start at index 1 or 0
-            if current_layer == 0:  # First layer (input layer)
-                a, _ = self.layers[current_layer].forward_propagation(
-                    self.w[current_layer], self.b[current_layer], x=current_input
-                )
-            else:  # Subsequent layers
-                a, _ = self.layers[current_layer].forward_propagation(
-                    self.w[current_layer], self.b[current_layer], a0=current_input
-                )
-            current_input = a  # Update input for the next layer
-
-        # Get predictions from the output of the last layer (softmax probabilities)
-        y_pred = np.argmax(current_input, axis=0)  # Returns the index of the max value along columns (samples)
-        return y_pred
-
-    def add_layer(self, neurons, activation_function: str = "relu", init_method: str = "std"):
+    def add_layer(self, layer_name: str, neurons, activation_function: str = "relu", init_method: str = "std"):
         # Check if no layers have been added yet
         if len(self.layers) == 0:
             # Add the first layer and set it as the head
-            self.layers.append(Layer(neurons=neurons, activation_function=activation_function))
-            self.layers[-1].input_layer = True  # Set the head attribute to True for the first layer
+            self.layers.append(Layer(layer_name=layer_name, neurons=neurons, activation_function=activation_function))
+            self.layers[-1].input_layer = True
             self.layers_sizes.append(neurons)
         else:
             # Add subsequent layers
-            self.layers[-1].output_layer = False  # Ensure the previous layer is not marked as the tail
-            self.layers.append(Layer(neurons=neurons, activation_function=activation_function))
-            self.layers[-1].output_layer = True  # Mark the current layer as the tail
+            self.layers[-1].output_layer = False
+            self.layers.append(Layer(layer_name=layer_name, neurons=neurons, activation_function=activation_function))
+            self.layers[-1].output_layer = True
             self.layers_sizes.append(neurons)
 
             # Initialize weights and biases for the new layer
@@ -135,27 +121,35 @@ class MLP:
             self.w[current_layer] -= self.learning_rate * self.dw[current_layer]
             self.b[current_layer] -= self.learning_rate * self.db[current_layer]
 
-    def get_predictions(self, x):
+    def predict(self, x):
         current_input = x
-        for current_layer in range(1, len(self.layers)):
-            a, _ = self.layers[current_layer].forward_propagation(
-                self.w[current_layer], self.b[current_layer], current_input
-            )
-            current_input = a  # Update input for the next layer
+        num_layers = len(self.layers)
+        for current_layer in range(1, num_layers):
+            # breakpoint()
+            if current_layer == 1:
+                a, z = self.layers[current_layer].forward_propagation(
+                    self.w[current_layer], self.b[current_layer], x=current_input
+                )
+            else:  # For subsequent layers
+                a, z = self.layers[current_layer].forward_propagation(
+                    self.w[current_layer], self.b[current_layer], a0=current_input
+                )
 
+            # Store activations and linear transformations
+            current_input = a  # Update input for the next layer
         # Get predictions from the output of the last layer (softmax probabilities)
         y_pred = np.argmax(current_input, axis=0)  # Returns the index of the max value along columns (samples)
         return y_pred
 
     def print_layers(self):
         for i in range(len(self.layers)):
-            print(f"Layer {i+1}: {self.layers[i].neurons} neurons, {self.layers[i].print_activation_function()}")
+            print(f"Layer {i + 1}: {self.layers[i].neurons} neurons, {self.layers[i].print_activation_function()}")
 
 
-# TODO
 def get_accuracy(y_pred, y_true):
-    return np.mean(y_pred == y_true)
-
+    # print("prediction: ", y_pred, "True: ", y_true)
+    # print(sum(y_pred))
+    return np.sum(y_pred == y_true) / y_true.size
 
 # # in each iteration
 # # forward propagation
@@ -181,77 +175,3 @@ def get_accuracy(y_pred, y_true):
 #             accuracy = get_accuracy(y_pred, y)
 #             print(f"Iteration {i}, accuracy: {accuracy}")
 #     return w1, b1, w2, b2
-#
-#
-# def make_prediction(x, w1, b1, w2, b2, activation_function):
-#     _, _, _, a2 = forward_propagation(x, w1, b1, w2, b2, activation_function)
-#     y_pred = get_predictions(a2)
-#     return y_pred
-#
-#
-# # TODO
-# def test_model(X, y, w1, b1, w2, b2):
-#     return
-
-
-
-# layers.py file
-
-# import numpy as np
-#
-#
-# def softmax(z):
-#     return np.exp(z) / np.sum(np.exp(z), axis=0)
-#
-#
-# def get_activation_function(self, activation="relu"):
-#     activation_function, derivative_activation_function = get_activation_functions(activation)
-#     return activation_function, derivative_activation_function
-#
-#
-# # one-hot encoding
-# # num_classes is the number of unique labels in the output
-# def one_hot(y, num_classes):
-#     return np.eye(num_classes)[y.reshape(-1)]
-#
-#
-# class Layer:
-#     def __init__(self, neurons, activation_function):
-#         self.head = False
-#         self.tail = False
-#         self.neurons = neurons
-#         self.activation_function, self.derivative_activation_function = get_activation_function(activation_function)
-#
-#     def forward_propagation(self, x, w1, b1, a0=None):
-#         if self.head:
-#             z1 = np.dot(w1, x) + b1
-#             a1 = self.activation_function(z1)
-#             return a1, z1
-#         elif self.tail:
-#             z1 = np.dot(w1, a0) + b1
-#             y = softmax(z1)
-#             return y, z1
-#         else:
-#             z1 = np.dot(w1, a0) + b1
-#             a1 = self.activation_function(z1)
-#             return a1, z1
-#
-#     # backward propagation
-#     # calculate dw1, db1, dw2, db2
-#     def backward_propagation(self, x, a0, a1, y=None, dz1=None, z1=None, w2=None, dz2=None):
-#         if self.tail:
-#             true_labels = one_hot(y, a1.shape[0])
-#             dz1 = a1 - true_labels
-#             dw1 = np.dot(dz1, a0.T)
-#             db1 = np.sum(dz1, axis=1, keepdims=True)
-#             return dw1, db1
-#         elif self.head:
-#             dz1 = np.dot(w2.T, dz2) * self.derivative_activation_function(z1)
-#             dw1 = np.dot(dz1, x.T)
-#             db1 = np.sum(dz1, axis=1, keepdims=True)
-#             return dw1, db1
-#         else:
-#             dz1 = np.dot(w2.T, dz2) * self.derivative_activation_function(z1)
-#             dw1 = np.dot(dz1, a0.T)
-#             db1 = np.sum(dz1, axis=1, keepdims=True)
-#             return dw1, db1

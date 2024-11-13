@@ -24,25 +24,27 @@ def preprocess_data(data: pd.DataFrame) -> np.ndarray:
 def split_data(data: np.ndarray, size: float = 0.8) -> dict:
     # Shuffle the data
     np.random.shuffle(data)
-
+    # breakpoint()
+    m, n = data.shape
     # Determine the index for splitting the data
-    split_index = int(size * data.shape[0])
+    split_index = m-int(size * m)
 
+    data_train = data[split_index:, :].T
     # Split the data into training and testing sets
-    train_data = data[:split_index, :].T
-    test_data = data[split_index:, :].T
+    y_train = data_train[0]
+    x_train = data_train[1:n]
+    x_train = x_train / 255.
 
-    # The first row contains the labels, and the rest are features
-    train_labels = train_data[0].reshape(1, -1)
-    validation_labels = test_data[0].reshape(1, -1)
-    train_features = train_data[1:]
-    validation_features = test_data[1:]
+    data_test = data[:split_index, :].T
+    y_test = data_train[0]
+    x_test = data_train[1:n]
+    x_test = x_train / 255.
 
     training_data = {
-        "train_features": train_features,
-        "train_labels": train_labels,
-        "test_features": validation_features,
-        "test_labels": validation_labels
+        "train_features": x_train,
+        "train_labels": y_train,
+        "test_features": x_test,
+        "test_labels": y_test
     }
 
     return training_data
