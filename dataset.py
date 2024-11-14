@@ -37,15 +37,23 @@ def split_data(data: np.ndarray, size: float = 0.8) -> dict:
     x_train = x_train / 255.
 
     data_test = data[:split_index, :].T
-    y_test = data_train[0]
-    x_test = data_train[1:n]
-    x_test = x_train / 255.
+    y_valid = data_train[0]
+    x_valid = data_train[1:n]
+    x_valid = x_train / 255.
 
     training_data = {
         "train_features": x_train,
         "train_labels": y_train,
-        "test_features": x_test,
-        "test_labels": y_test
+        "test_features": x_valid,
+        "test_labels": y_valid
     }
 
     return training_data
+
+
+def test_dataset(data: pd.DataFrame):
+    dataset = data.T
+    x_test = dataset[1:]
+    y_test = dataset[0]
+    x_test = x_test / 255.
+    return x_test, y_test
