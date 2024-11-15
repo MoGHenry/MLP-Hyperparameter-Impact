@@ -2,9 +2,9 @@ import numpy as np
 from activations import get_activation_functions
 from layers import Layer
 from init_parameters import std_initialize_parameters, he_initialize_parameters
-from loss import cross_entropy_loss, one_hot
+from loss import cross_entropy_loss, one_hot, get_accuracy
 from layers import softmax
-
+from plotting import plotting, plot_accuracy_loss, plot_all
 
 # https://youtu.be/w8yWXqWQYmU?si=MXhI9EgsfYXMdshP&t=917
 
@@ -29,9 +29,13 @@ class MLP:
         self.dw = [0]
         self.db = [0]
         self.dz = [0]
+        self.accuracy_train = {}
+        self.loss_train = {}
+        self.accuracy_valid = {}
+        self.loss_valid = {}
 
     # TODO
-    def fit(self, x, y):
+    def fit(self, x_train, y_train, x_valid, y_valid, logging=1):
         # breakpoint()
         num_layers = len(self.layers)
         self.a = [0] * num_layers  # Initialize activations list
@@ -42,7 +46,7 @@ class MLP:
 
         for i in range(self.num_iterations):
             # Forward propagation through each layer
-            current_input = x  # Initial input for the first layer
+            current_input = x_train  # Initial input for the first layer
             self.a[0] = current_input  # Store the activation for the input layer
             # breakpoint()
             for current_layer in range(1, num_layers):
@@ -65,11 +69,11 @@ class MLP:
             for current_layer in reversed(range(1, num_layers)):
                 if current_layer == num_layers - 1:
                     dw, db, dz = self.layers[current_layer].backward_propagation(
-                        x=x, a0=self.a[current_layer - 1], a1=self.a[current_layer], y=y
+                        x=x_train, a0=self.a[current_layer - 1], a1=self.a[current_layer], y=y_train
                     )
                 else:
                     dw, db, dz = self.layers[current_layer].backward_propagation(
-                        x=x,
+                        x=x_train,
                         a0=self.a[current_layer - 1],
                         a1=self.a[current_layer],
                         z1=self.z[current_layer],
@@ -90,11 +94,21 @@ class MLP:
                 # breakpoint()
 
             # print progress every 2 iterations or at the end of the loop
-            if i % 2 == 0 or i == self.num_iterations - 1:
-                y_pred = self.predict(x)
-                loss = cross_entropy_loss(one_hot(y, self.layers_sizes[-1]), y_pred)
-                accuracy = get_accuracy(y_pred, y)
-                print(f"Iteration {i + 1}/{self.num_iterations}, Accuracy: {accuracy:.4f}")
+            if i % logging == 0 or i == self.num_iterations - 1:
+                y_pred_train = self.predict(x_train)
+                y_pred_valid = self.predict(x_valid)
+                accuracy_train = get_accuracy(y_pred_train, y_train)
+                accuracy_valid = get_accuracy(y_pred_valid, y_valid)
+                loss_train = cross_entropy_loss(one_hot(y_train, self.layers_sizes[-1]), y_pred_train)
+                loss_valid = cross_entropy_loss(one_hot(y_valid, self.layers_sizes[-1]), y_pred_valid)
+                print(f"Iteration {i + 1}/{self.num_iterations}, Accuracy(train): {accuracy_train:.4f}"
+                      f", Loss(train): {loss_train:.4f}")
+                print(f"Iteration {i + 1}/{self.num_iterations}, Accuracy(valid): {accuracy_valid:.4f}"
+                      f", Loss(valid): {loss_valid:.4f}")
+                self.accuracy_train[i + 1] = accuracy_train
+                self.loss_train[i + 1] = loss_train
+                self.accuracy_valid[i + 1] = accuracy_valid
+                self.loss_valid[i + 1] = loss_valid
 
     def add_layer(self, layer_name: str, neurons, activation_function: str = "relu", init_method: str = "std"):
         # Check if no layers have been added yet
@@ -141,22 +155,30 @@ class MLP:
         y_pred = np.argmax(current_input, axis=0)  # Returns the index of the max value along columns (samples)
         return y_pred
 
+    def plot_accuracy(self):
+        plotting(data=[self.accuracy_train, self.accuracy_valid], x_label="Iteration", y_label="Accuracy",
+                 title="Accuracy vs Iteration", legend_labels=["Training", "Validation"])
+
+    def plot_loss(self):
+        plotting(data=[self.loss_train, self.loss_valid], x_label="Iteration", y_label="Loss",
+                 title="Loss vs Iteration", legend_labels=["Training", "Validation"])
+
+    def plot_accuracy_loss(self):
+        plot_accuracy_loss(accuracy=self.accuracy_train, loss=self.loss_train, x_label="Iteration", y_label="Value")
+
+    def plots(self):
+        plot_all(accuracy=[self.accuracy_train, self.accuracy_valid],
+                 loss=[self.loss_train, self.loss_valid], x_label="Iteration", y_label="Value"
+                 , legend_labels=["Training", "Validation"])
+
     def print_layers(self):
         for i in range(len(self.layers)):
             print(f"Layer {i + 1}: {self.layers[i].neurons} neurons, {self.layers[i].print_activation_function()}")
 
 
-def get_accuracy(y_pred, y_true):
-    # print("prediction: ", y_pred, "True: ", y_true)
-    # print(sum(y_pred))
-    return np.sum(y_pred == y_true) / y_true.size
 
-# # in each iteration
-# # forward propagation
-# # backward propagation
-# # update parameters
-# # print the accuracy and loss
-# # TODO change parameters to dictionary
+
+
 # def gradient_descent(x, y, w1, b1, w2, b2, learning_rate, num_iterations, activation_function
 #                      , derivative_activation_function="relu"):
 #     for i in range(num_iterations):
