@@ -9,7 +9,7 @@ def softmax(z):
     return a
 
 
-def get_activation_function(self, activation="relu"):
+def get_activation_function(activation="relu"):
     activation_function, derivative_activation_function = get_activation_functions(activation)
     return activation_function, derivative_activation_function
 
