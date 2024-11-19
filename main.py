@@ -15,8 +15,9 @@ mlp = MLP(learning_rate=0.01, num_iterations=200)
 # add layers to the neural network
 # need to specify the name of the layer for input, first hidden, and output layers
 # others layers' name can be arbitrary
-mlp.add_layer("input_layer", len(X_train), activation_function="relu", init_method="he")
-mlp.add_layer("first_hidden_layer", 10, init_method="he")
+# breakpoint()
+mlp.add_layer("input_layer", len(X_train), activation_function="sigmoid", init_method="he")
+mlp.add_layer("first_hidden_layer", 100, init_method="he")
 # mlp.add_layer("xxx", 200)
 mlp.add_layer("output_layer", len(np.unique(y_train)))
 
