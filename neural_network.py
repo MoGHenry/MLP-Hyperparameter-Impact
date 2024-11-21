@@ -110,7 +110,7 @@ class MLP:
                 self.accuracy_valid[i + 1] = accuracy_valid
                 self.loss_valid[i + 1] = loss_valid
 
-    def add_layer(self, layer_name: str, neurons, activation_function: str = "relu", init_method: str = "std"):
+    def add_layer(self, layer_name: str, neurons, activation_function: str = "relu", init_method: str = "he"):
         # Check if no layers have been added yet
         if len(self.layers) == 0:
             # Add the first layer and set it as the head
