@@ -4,9 +4,9 @@ import dataset
 from loss import get_accuracy
 
 # digit recognizer dataset
-file_path = "./data/digit-recognizer/train/train.csv"
+# file_path = "./data/digit-recognizer/train/train.csv"
 # fashion-mnist dataset
-# file_path = "./data/fashion-mnist/train/fashion-mnist_train.csv"
+file_path = "./data/fashion-mnist/train/fashion-mnist_train.csv"
 # iris species dataset
 # file_path = "./data/iris-species/Iris.csv"
 
@@ -25,16 +25,16 @@ mlp = MLP(learning_rate=0.1, num_iterations=200)
 # relu - he
 # sigmoid, tanh - std
 # breakpoint()
-mlp.add_layer("input_layer", len(X_train), activation_function="sigmoid", init_method="std")
-mlp.add_layer("first_hidden_layer", 800, activation_function="sigmoid", init_method="std")
-mlp.add_layer("second_hidden_layer", 800, activation_function="sigmoid", init_method="std")
+mlp.add_layer("input_layer", len(X_train), activation_function="tanh", init_method="he")
+mlp.add_layer("first_hidden_layer", 800, activation_function="tanh", init_method="he")
+mlp.add_layer("second_hidden_layer", 800, activation_function="tanh", init_method="he")
 # mlp.add_layer("third_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("second_hidden_layer", 200, activation_function="sigmoid", init_method="std")
-mlp.add_layer("output_layer", len(np.unique(y_train)), activation_function="sigmoid", init_method="std")
+mlp.add_layer("output_layer", len(np.unique(y_train)), activation_function="tanh", init_method="he")
 
 mlp.print_layers()
 # breakpoint()
