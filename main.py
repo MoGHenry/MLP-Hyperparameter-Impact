@@ -8,7 +8,7 @@ from loss import get_accuracy
 # fashion-mnist dataset
 file_path = "./data/fashion-mnist/train/fashion-mnist_train.csv"
 # iris species dataset
-# file_path = "./data/iris-species/Iris.csv"
+# file_path = "data/iris-species/Iris.csv"
 
 train_data = dataset.load_data(file_path)
 train_data = dataset.preprocess_data(train_data)
@@ -17,24 +17,24 @@ train_data = dataset.split_data(train_data)
 X_train, y_train, X_valid, y_valid = train_data.values()
 
 # create a neural network with 2 hidden layers and 1 output layer
-mlp = MLP(learning_rate=0.1, num_iterations=200)
+mlp = MLP(learning_rate=0.01, num_iterations=200)
 
 # add layers to the neural network
 # need to specify the name of the layer for input, first hidden, and output layers
 # others layers' name can be arbitrary
 # relu - he
 # sigmoid, tanh - std
-# breakpoint()
-mlp.add_layer("input_layer", len(X_train), activation_function="tanh", init_method="he")
-mlp.add_layer("first_hidden_layer", 800, activation_function="tanh", init_method="he")
-mlp.add_layer("second_hidden_layer", 800, activation_function="tanh", init_method="he")
+breakpoint()
+mlp.add_layer("input_layer", len(X_train), activation_function="tanh", init_method="std")
+mlp.add_layer("first_hidden_layer", 100, activation_function="tanh", init_method="std")
+mlp.add_layer("second_hidden_layer", 100, activation_function="tanh", init_method="he")
 # mlp.add_layer("third_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("forth_hidden_layer", 800, activation_function="relu", init_method="he")
 # mlp.add_layer("second_hidden_layer", 200, activation_function="sigmoid", init_method="std")
-mlp.add_layer("output_layer", len(np.unique(y_train)), activation_function="tanh", init_method="he")
+mlp.add_layer("output_layer", len(np.unique(y_train)), activation_function="tanh", init_method="std")
 
 mlp.print_layers()
 # breakpoint()
