@@ -33,17 +33,23 @@ def split_data(data: np.ndarray, size: float = 0.8) -> dict:
     data_train = data[split_index:, :].T
     # Split the data into training and testing sets
     y_train = data_train[0]
+    # For Iris dataset, we need to comments out the following line
+    # and then uncomment the next line to normalize the data
     x_train = data_train[1:n] / 255.
+    # x_train = data_train[1:n]
 
     data_test = data[:split_index, :].T
     y_valid = data_test[0]
+    # For Iris dataset, we need to comments out the following line
+    # and then uncomment the next line to normalize the data
     x_valid = data_test[1:n] / 255.
+    # x_valid = data_test[1:n]
 
     training_data = {
         "train_features": x_train,
-        "train_labels": y_train,
+        "train_labels": y_train.astype(int),
         "valid_features": x_valid,
-        "valid_labels": y_valid
+        "valid_labels": y_valid.astype(int)
     }
 
     return training_data
