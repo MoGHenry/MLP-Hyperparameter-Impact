@@ -14,10 +14,6 @@ def get_activation_function(activation="relu"):
     return activation_function, derivative_activation_function
 
 
-# one-hot encoding
-# num_classes is the number of unique labels in the output
-
-
 class Layer:
     def __init__(self, layer_name, neurons, activation_function):
         self.layer_name = layer_name

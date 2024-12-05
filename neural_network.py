@@ -6,8 +6,6 @@ from loss import cross_entropy_loss, one_hot, get_accuracy
 from layers import softmax
 from plotting import plotting, plot_accuracy_loss, plot_all
 
-# https://youtu.be/w8yWXqWQYmU?si=MXhI9EgsfYXMdshP&t=917
-
 
 def get_init_method(init_method="std"):
     if init_method == "std":
@@ -174,26 +172,3 @@ class MLP:
     def print_layers(self):
         for i in range(len(self.layers)):
             print(f"Layer {i + 1}: {self.layers[i].neurons} neurons, {self.layers[i].print_activation_function()}")
-
-
-
-
-
-# def gradient_descent(x, y, w1, b1, w2, b2, learning_rate, num_iterations, activation_function
-#                      , derivative_activation_function="relu"):
-#     for i in range(num_iterations):
-#         forward_cache = forward_propagation(x, w1, b1, w2, b2, activation_function)
-#         backward_cache = backward_propagation(x, y, forward_cache["z1"], forward_cache["a1"],
-#                                               forward_cache["z2"], forward_cache["a2"], w2,
-#                                               derivative_activation_function)
-#         updated_parameters = update_parameters(w1, b1, w2, b2, backward_cache["dw1"], backward_cache["db1"],
-#                                                backward_cache["dw2"], backward_cache["db2"], learning_rate)
-#         w1 = updated_parameters["w1"]
-#         b1 = updated_parameters["b1"]
-#         w2 = updated_parameters["w2"]
-#         b2 = updated_parameters["b2"]
-#         if i % 100 == 0:
-#             y_pred = get_predictions(forward_cache["a2"])
-#             accuracy = get_accuracy(y_pred, y)
-#             print(f"Iteration {i}, accuracy: {accuracy}")
-#     return w1, b1, w2, b2
