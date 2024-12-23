@@ -1,12 +1,72 @@
 # ICSI536-ML-Project
 
-# Project Overview
+This project focuses on exploring the performance of Multi-Layer Perceptrons (MLPs) on different datasets with varying configurations. The implementation is entirely custom-built using the Numpy library without reliance on pre-existing neural network frameworks.
 
-This project is focused on implementing and analyzing a custom multi-layer perceptron (MLP) neural network 
-using Python's NumPy library. The primary objective is to study how varying neural network configurations—such as the 
-number of layers, neurons, activation functions, and parameter initialization techniques—affect 
-performance across different datasets. The project explores the interplay between architecture depth, 
-activation functions, and dataset complexity to determine optimal configurations.
+## Table of Contents
+1. [Project Overview](#project-overview)
+  - [Motivation](#motivation)
+  - [Objective](#objective)
+  - [Datasets](#datasets)
+2. [Methodology](#methodology)
+3. [Results](#results)
+  - [MNIST](#mnist)
+  - [Fashion MNIST](#fashion-mnist)
+  - [Iris](#iris)
+4. [Key Takeaways](#key-takeaways)
+5. [Future Work](#future-work)
+6. [How to Run the Code](#how-to-run)
+7. [Authors](#authors)
+8. [License](#license)
+
+## Project Overview
+
+### Motivation
+MLPs are versatile neural network architectures capable of solving complex problems such as classification, regression, and time-series prediction. Despite their computational expense and potential for overfitting, they remain a foundational model in machine learning, especially for structured data.
+
+### Objective
+The objective of this project is to investigate how varying MLP configurations, including the number of layers, number of neurons, activation functions, and initialization techniques, impact performance on datasets of varying complexity.
+
+### Datasets
+Three datasets were used for evaluation:
+- **MNIST**: A standard benchmark dataset for digit recognition.
+- **Fashion MNIST**: A more complex dataset involving detailed textures and patterns.
+- **Iris**: A small dataset with only four features and three labels, used to study the behavior of MLPs on simpler data.
+
+## Methodology
+1. **Custom MLP Implementation**: The neural network was built from scratch using Numpy, without pre-existing libraries.
+2. **Configuration Variations**:
+  - Activation Functions: ReLU, Sigmoid, Tanh.
+  - Initialization Techniques: Standard (STD) and He initialization.
+  - Number of Layers: 1 to 6.
+  - Number of Neurons per Layer: 10 to 1200.
+3. **Evaluation Metrics**:
+  - Accuracy.
+  - Loss.
+  - Overfitting behavior.
+
+## Results
+### MNIST
+- **ReLU**: Performed best overall, showing high accuracy without overfitting.
+- **Sigmoid and Tanh**: Marginally lower accuracy; Tanh occasionally exhibited overfitting.
+
+### Fashion MNIST
+- **ReLU**: Continued to perform well but required more layers and neurons for better accuracy.
+- **Sigmoid and Tanh**: Prone to overfitting, mitigated by He initialization.
+
+### Iris
+- **ReLU**: Less effective due to sparse activations on a low-dimensional dataset.
+- **Sigmoid and Tanh**: Performed better due to their smooth and bounded behavior, well-suited for small datasets.
+
+## Key Takeaways
+1. ReLU activation is highly effective for large datasets and deep architectures but struggles with small datasets.
+2. Sigmoid and Tanh are better suited for small datasets, providing smoother convergence.
+3. Increasing the number of neurons and layers generally improves accuracy but comes at the cost of computational efficiency and risk of overfitting.
+4. He initialization helps mitigate overfitting in deeper architectures.
+
+## Future Work
+1. Incorporate convolutional neural networks (CNNs) for image-based datasets.
+2. Experiment with advanced regularization techniques to address overfitting.
+3. Explore alternative activation functions to enhance performance further.
 
 # How to Run
 To run the project, follow these steps:
@@ -36,3 +96,13 @@ For example
   - it means the input layer uses ReLU activation function, the hidden layers use ReLU activation function, and the output layer uses ReLU activation function)
 - SSSS 700 800 0.1 std
   - it means the input layer uses sigmoid activation function, the hidden layers use sigmoid activation function and has 700 and 800 neurons respectively, and the output layer uses sigmoid activation function with learning rate 0.1 and weights and biases initialized using the standard deviation method.
+
+## Authors
+- Mamadou A Diallo
+- John Kaminski
+- Ugochukwu B Okoro
+- Henry Qui
+- Abhishek Santhakumar
+
+## License
+This project is licensed under the MIT License.
